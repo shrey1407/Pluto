@@ -1,0 +1,1039 @@
+================================================================================
+                          PLUTO — PRODUCT DOCUMENTATION
+================================================================================
+
+Version: 1.1
+Last updated: February 2025
+
+This document describes Pluto, its features, and how users interact with the
+platform. It is intended as the primary reference for the product.
+
+
+================================================================================
+1. INTRODUCTION
+================================================================================
+
+1.1 What is Pluto?
+
+Pluto is a loyalty and rewards platform. Users create an account, earn loyalty
+points through activities such as daily rewards, completing quests, and
+referrals, and spend those points on platform features—including creating
+campaigns, adding quests, using ChainLens, Trendcraft, PulseBot, and tipping on
+Agora. Users can also purchase additional loyalty points via a mock wallet
+integration.
+
+1.2 Why the name Pluto?
+
+The project is named Pluto because Pluto stands apart from the other planets—
+its orbit, composition, and classification make it distinct. In the same way,
+the web3 community is distinct: it operates on different principles, rewards
+participation and ownership, and brings together creators, developers, and
+users in a unique ecosystem. Pluto the platform aims to reflect that
+distinctiveness by offering a unified space for loyalty, quests, social
+interaction, and AI-powered tools that serve this community.
+
+1.3 Who is it for?
+
+  - End users: People who want to earn rewards, complete quests, join campaigns,
+    use social features (Agora), explore trends (Trendcraft), use an AI
+    companion (PulseBot), or check wallet insights (ChainLens).
+
+  - Campaign creators: Users who create campaigns and add quests (e.g. "Follow
+    us on X", "Share a tweet") and reward participants with loyalty points.
+
+  - Administrators: Users with admin rights can moderate Agora content (e.g.
+    hide reported posts) and view reports.
+
+1.4 Core concepts
+
+  Loyalty points
+    The in-app currency. Users earn them (daily claim, quests, referrals,
+    wallet purchase) and spend them (campaigns, quests, ChainLens, Trendcraft,
+    PulseBot, Agora tips).
+
+  Campaigns
+    Collections of "quests" that may be time-bound or open-ended. Only the
+    campaign owner can add or edit quests; any logged-in user can participate
+    and verify quests to earn points.
+
+  Quests
+    Tasks (e.g. follow a handle, share a link) that participants complete and
+    verify. Completing a quest awards a fixed number of loyalty points.
+
+  Agora
+    The in-app social layer: posts, likes, replies, tips (in loyalty points),
+    follow and followers, bookmarks, direct messages, and notifications.
+
+
+================================================================================
+2. NOVELTY
+================================================================================
+
+Pluto brings together several dimensions that are often treated separately:
+
+  Unified loyalty across features
+    A single loyalty-point economy ties together campaigns and quests, social
+    tipping (Agora), wallet intelligence (ChainLens), trend discovery and AI
+    content (Trendcraft), and an AI companion over Telegram (PulseBot). Users
+    earn in one place and spend across the whole product, which encourages
+    exploration and retention.
+
+  Gamified campaigns and quests
+    Campaign creators run time-bound or open-ended campaigns with verifiable
+    quests (e.g. follow, tweet, link). Participants prove completion and earn
+    points; creators spend points to add quests. The flow is built for
+    community growth and engagement rather than one-off actions.
+
+  Social layer with loyalty-native tips
+    Agora is a full social feed (posts, likes, replies, follow, DMs,
+    notifications) where tips are paid in loyalty points, not a separate
+    currency. This keeps value inside the platform and makes rewarding
+    creators a first-class action.
+
+  AI and external data behind a loyalty gate
+    Trendcraft (aggregated trends and AI-generated content) and PulseBot
+    (Telegram chat summaries and Q&A) are gated by loyalty points. Users
+    trade engagement and points for utility, which balances usage and
+    sustainability.
+
+  Public landing with leaderboard, stats, and feedback
+    The landing page is not only marketing: it shows a live leaderboard (top
+    users by points), platform-wide stats (users, campaigns, quests, points
+    earned), and a feedback form whose submissions are stored. This makes
+    progress visible and keeps the product open to input from visitors and
+    users alike.
+
+  Web3-friendly entry point
+    Optional wallet connect and a mock “buy loyalty” flow give a web3-style
+    onboarding path without requiring crypto for core actions. The platform
+    can grow toward real payments or stay as a loyalty-only product.
+
+
+================================================================================
+3. SCOPE
+================================================================================
+
+Pluto’s scope spans the following:
+
+  Product scope
+    - User accounts (email/password and Google), profiles, and referral codes.
+    - Loyalty points: earn (daily claim, quest completion, referral, mock
+      purchase) and spend (campaigns, quests, ChainLens, Trendcraft, PulseBot,
+      Agora tips).
+    - Campquest: campaigns and quests with creator/participant roles and
+      verification (e.g. Twitter/link).
+    - ChainLens: wallet intelligence for a given address (costs loyalty).
+    - Agora: posts, feed, likes, replies, tips (loyalty), follow, bookmarks,
+      DMs, notifications, reports, and admin moderation.
+    - Trendcraft: aggregated trends (YouTube, Reddit, Hacker News, News) and
+      AI content generation and suggestions (cost loyalty).
+    - PulseBot: link Telegram bot, chat summaries, Q&A over chat context,
+      group stats (cost loyalty); Gmail connect, email tasks (AI-suggested
+      replies, cached list), scheduled emails (compose and send later; cron
+      sends at scheduled time; sent items shown for 24h).
+    - Landing: hero, feature cards with visible "Try …" links, leaderboard,
+      platform stats, FAQ, feedback form (stored in database).
+    - Responsive & mobile: hamburger nav menu, Agora bottom nav, responsive
+      notification panel, landing cards and Docs layout for small screens.
+    - Privacy Policy and Terms of Service pages.
+    - Optional wallet connect and mock loyalty purchase.
+
+  Technical scope
+    - Frontend: React, TypeScript, Vite, Tailwind, React Router, Framer
+      Motion, React Three Fiber, RainbowKit/wagmi, TanStack Query. JWT-based
+      session; Google OAuth redirect flow.
+    - Backend: Node.js, Express, TypeScript, MongoDB (Mongoose). REST API
+      under /api; JWT auth; optional auth and admin-only routes. Socket.IO
+      for real-time messaging (e.g. Agora DMs). Rate limiting (general and
+      auth) applied to /api. Optional Redis (REDIS_URL) for caching
+      ChainLens, Trendcraft, and PulseBot responses.
+    - Integrations: Google OAuth, Moralis (ChainLens), Telegram (PulseBot),
+      Twitter/RapidAPI (quest verification), YouTube/Reddit/NewsAPI (Trendcraft),
+      Gemini (Trendcraft and PulseBot AI). Optional Redis for response caching.
+
+  Out of scope (current version)
+    - Real cryptocurrency payments or on-chain loyalty tokens.
+    - Native mobile apps (web-only).
+    - Full Agora discovery (e.g. search) and advanced moderation beyond hide
+      post.
+    - Multi-language or multi-tenant white-label.
+
+
+================================================================================
+4. CHALLENGES FACED
+================================================================================
+
+  Loyalty economy design
+    Balancing earn and spend so that points feel valuable but not scarce
+    required tuning costs (campaign creation, quest add, ChainLens, Trendcraft,
+    PulseBot) and rewards (daily claim curve, quest completion, referral).
+    Keeping Agora tips in loyalty (min/max amounts, balance checks) without
+    fragmenting into a second currency was a deliberate constraint.
+
+  Quest verification
+    Verifying that a user actually completed a quest (e.g. followed an
+    account, posted a tweet) depends on third-party APIs (Twitter, RapidAPI)
+    with rate limits, keys, and sometimes paid plans. Supporting multiple
+    verification paths (e.g. bearer token vs. RapidAPI) and clear error
+    messages when keys are missing or invalid was necessary for a reliable
+    flow.
+
+  Google OAuth and redirect URI
+    Using Google OAuth with a redirect (instead of a popup) requires the
+    frontend to register the exact callback URL (e.g. /login/callback) in
+    Google Cloud Console. Mismatched origins or redirect URIs cause silent
+    failures or 400 errors. Aligning Backend (GOOGLE_CLIENT_ID for token
+    verification) and Frontend (VITE_GOOGLE_CLIENT_ID, callback URL) and
+    documenting the setup reduced configuration errors.
+
+  Real-time and consistency
+    Agora DMs and notifications use Socket.IO for real-time delivery. Keeping
+    message order, read state, and notification state consistent across
+    clients and restarts (with MongoDB as source of truth) required clear
+    event contracts and reconnection handling.
+
+  AI and external APIs
+    Trendcraft and PulseBot depend on Gemini and external data (YouTube,
+    Reddit, NewsAPI, Telegram). Managing API keys, rate limits, errors (e.g.
+    model not found, key invalid), and cost (loyalty deduction) in a
+    user-visible way needed centralised error handling and clear feedback in
+    the UI.
+
+  Gamified UI and performance
+    The Campquest UI uses 3D background (React Three Fiber) and animated
+    borders (conic gradient on hover). Keeping the experience smooth on
+    mid-range devices while preserving the “gamezone” look required
+    constraining particle counts, simplifying shadows, and avoiding
+    unnecessary re-renders.
+
+  Feedback and landing data
+    Storing landing feedback in the database and exposing leaderboard and
+    stats via public APIs meant defining clear schemas (Feedback model) and
+    read-only endpoints that do not expose sensitive user data (e.g.
+    leaderboard shows username/points, not email).
+
+
+================================================================================
+5. ACCESSING PLUTO
+================================================================================
+
+5.1 Web routes
+
+  Landing (home)          /
+  Login                   /login
+  Login callback (Google) /login/callback
+  Sign up                 /signup
+  Profile                 /profile (requires login)
+  Campaigns list          /campaigns (requires login)
+  Campaign detail         /campaigns/:id (requires login)
+  ChainLens               /chainlens (requires login)
+  Agora                   /agora or equivalent (requires login)
+  Trendcraft              /trendcraft (requires login for some actions)
+  PulseBot                /pulsebot (requires login)
+  Documentation           /docs
+  Privacy Policy          /privacy
+  Terms of Service         /terms
+
+5.2 Logging in
+
+  Email and password
+    The user enters email and password on the login or signup page. After
+    successful authentication, the application stores a session token and
+    redirects the user (e.g. to home or profile).
+
+  Google
+    The user clicks "Continue with Google" on the login page and is redirected
+    to Google. After consent, Google redirects back to the application's login
+    callback URL with an identity token. The application validates the token,
+    creates or retrieves the user account, and issues a session token.
+
+  Logout
+    The user clicks "Log out" in the navigation bar. The application clears the
+    stored token and the user is treated as signed out.
+
+
+================================================================================
+6. USER ROLES
+================================================================================
+
+6.1 Logged-in user
+
+  - View and edit own profile; see loyalty balance; claim daily rewards; use
+    referral code; purchase loyalty (mock).
+  - List and view all campaigns; create campaigns (costs loyalty); filter by
+    "My campaigns."
+  - Open a campaign; if owner: add, edit, or delete quests and change campaign
+    status; if participant or any user: verify quests when the campaign is
+    active to earn points.
+  - Use ChainLens (wallet insights), Trendcraft (feed, content generation,
+    suggestions), PulseBot (link bot, summary, ask, stats)—each may cost
+    loyalty as documented.
+  - Use Agora: create, edit, delete posts; like; reply; tip (loyalty); follow or
+    unfollow; bookmark; send and receive direct messages; view and manage
+    notifications; report posts or users.
+  - Submit feedback on the landing page.
+  - View leaderboard, platform stats, FAQ, Privacy Policy, and Terms of
+    Service.
+
+6.2 Guest (not logged in)
+
+  - View the landing page (hero, features, leaderboard, stats, FAQ).
+  - Submit feedback (optional name and email).
+  - View Privacy Policy and Terms of Service.
+  - Cannot access Profile, Campaigns, ChainLens, Agora, Trendcraft, PulseBot,
+    or Daily Rewards; cannot create campaigns or verify quests.
+
+6.3 Administrator
+
+  - All capabilities of a logged-in user.
+  - Agora: view list of reports; hide reported posts (content moderation).
+
+
+================================================================================
+7. LOYALTY POINTS
+================================================================================
+
+Loyalty points are the in-app currency. They are used to unlock features and
+reward others (e.g. tips on Agora).
+
+  Earning
+    Daily claim (streak of 1–7 days; points increase by day), completing
+    quests (fixed reward per quest), referral (new user signs up with your
+    code), and wallet purchase (mock).
+
+  Spending
+    Creating a campaign, adding a quest, ChainLens lookup, Trendcraft AI
+    features, PulseBot summary/ask/stats, and tipping posts or replies on
+    Agora.
+
+  Balance
+    Shown on the profile and in relevant modals. Actions that require points
+    are blocked when the balance is insufficient.
+
+
+================================================================================
+8. LANDING PAGE
+================================================================================
+
+The landing page is available at the root URL and does not require login.
+
+  Navbar
+    Logo (links to home), links to Campquest, Agora, ChainLens, Trendcraft,
+    PulseBot, and either "Log out" with user avatar (when logged in) or "Log
+    in" (when not). On small screens a hamburger menu shows these links in an
+    overlay; notifications bell and profile stay in the header.
+
+  Hero
+    Visual section with headline and short tagline, and a primary call-to-action.
+
+  Features (Built for players)
+    Cards for Campquest, PulseBot, ChainLens, Agora, Trendcraft, Wallet, and
+    Daily Rewards. Each card has a title, short description, and a visible
+    "Try …" link (e.g. Try Agora, Try Campquest) styled as a tappable button.
+    Cards grow with content so links are never clipped on mobile.
+
+  Leaderboard (Top players)
+    List of users with the highest loyalty points (e.g. top 20). Shows rank,
+    username or avatar, and points. Data is loaded from the backend. If there
+    is no data or an error, a fallback message is shown.
+
+  Platform stats
+    Counts such as number of players (users), campaigns, quests, quests
+    completed, and total loyalty points earned. Data is loaded from the
+    backend.
+
+  FAQ
+    Accordion with questions such as: What are loyalty points? How do I earn
+    them? What is Campquest? Is my data safe? What is PulseBot? Answers explain
+    the product in plain language.
+
+  Feedback
+    Form with required message and optional name and email. On submit, data is
+    sent to the backend and stored. A success message is shown; the user can
+    send another message.
+
+  Footer
+    Links to Features, Leaderboard, Stats, FAQ, Feedback, Docs, Privacy, and
+    Terms; copyright notice.
+
+
+================================================================================
+9. AUTHENTICATION
+================================================================================
+
+9.1 Sign up (registration)
+
+  The user goes to the signup page and enters email, password, and optionally
+  a referral code. On submit, the backend creates a new account. If a valid
+  referral code is provided, the referrer receives referral loyalty points. The
+  user can then log in with email and password (or may be signed in
+  automatically, depending on implementation). Duplicate email returns an
+  error.
+
+9.2 Login
+
+  Email and password: The user enters email and password. The backend
+  validates and returns a session token. The frontend stores the token and
+  redirects the user.
+
+  Google: The user clicks "Continue with Google" and is sent to Google's OAuth
+  screen. After consent, Google redirects back to the application with an
+  identity token. The backend verifies the token, finds or creates the user,
+  and returns a session token. The frontend stores it and redirects the user.
+
+  Invalid credentials or failed Google verification show an error message.
+
+9.3 Login callback (Google)
+
+  The frontend reads the identity token from the redirect URL, sends it to the
+  backend, and receives user data and a session token. The frontend stores
+  the token and redirects. If verification fails, the user sees an error and
+  can return to the login page.
+
+9.4 Session and security
+
+  The session is maintained by the frontend using a token. Protected API
+  requests include this token. The token has an expiry (e.g. 7 days); after
+  expiry the user must log in again. The application may redirect to the login
+  page when the API returns an unauthorized response.
+
+
+================================================================================
+10. PROFILE
+================================================================================
+
+The profile page is available to logged-in users and shows the user's
+information and loyalty-related actions.
+
+  User information
+    Username, email (if available), profile picture (if set). The user can
+    update username and profile picture (and possibly other fields) through the
+    profile page or a dedicated edit flow.
+
+  Loyalty points
+    Current balance is displayed prominently. This balance is used for
+    creating campaigns, adding quests, ChainLens, Trendcraft, PulseBot, and
+    Agora tips.
+
+  Daily claim
+    Status of the daily reward (e.g. "Claim daily" or "Next claim in X"). The
+    user can claim once per 24 hours; after claiming, the next claim time and
+    streak (e.g. day 2 of 7) are shown. The streak resets if the user misses a
+    day (per backend rules).
+
+  Referral
+    The user's referral code for sharing. When another user signs up with this
+    code, the referrer receives referral loyalty points (e.g. 500 pts).
+
+  Stats
+    Summary counts such as campaigns created, campaigns participated in,
+    quests completed, and posts count (if Agora is integrated). Links or
+    shortcuts to the campaigns list or relevant pages may be provided.
+
+  Buy loyalty (Wallet)
+    Button or section to purchase loyalty points. This opens a flow (e.g.
+    modal) to connect a wallet (e.g. via RainbowKit) and perform a mock
+    purchase: the user selects an amount and "pays" with mock crypto; the
+    backend credits loyalty points. No real payment is processed.
+
+
+================================================================================
+11. CAMPQUEST (CAMPAIGNS AND QUESTS)
+================================================================================
+
+11.1 Campaigns list
+
+  The user sees a list of campaign cards. Each card shows campaign name,
+  description, status (active, draft, or expired), number of quests, number of
+  participants, expiry date (if any), and creator.
+
+  Filters: "All" (all campaigns) and "My campaigns" (only campaigns created by
+  the current user).
+
+  Create campaign: The user clicks "Create campaign" and enters campaign name,
+  description, and optional expiry (in days). Submitting creates the campaign
+  and deducts loyalty points (e.g. 100 pts). The user is then taken to the new
+  campaign's detail page.
+
+  Clicking a card opens that campaign's detail page.
+
+  The campaigns section uses a gamified visual style: 3D-style background,
+  gradient headings, and cards with a thin colorful border on hover.
+
+11.2 Campaign detail
+
+  The header shows campaign name, description, and status. The owner can
+  change the status (e.g. active, draft, expired). Metadata includes number of
+  quests, number of participants, expiry date, and creator.
+
+  Owner actions:
+    Add quest: The owner clicks "Add quest" and enters title, description,
+    quest type (e.g. follow, tweet, link), and required link or handle.
+    Submitting adds the quest and deducts loyalty points (e.g. 50 pts per
+    quest).
+
+    Edit quest: The owner can edit a quest's title, description, required
+    link, and type.
+
+    Delete quest: The owner can remove a quest from the campaign.
+
+    Delete campaign: The owner can delete the entire campaign (with
+    confirmation).
+
+  Quests list: Each quest shows title, description, type badge, required
+  link/handle, and reward (e.g. "+25 pts on completion"). For participants,
+  when the campaign is active:
+    Verify: The user clicks "Verify" to prove completion (e.g. by providing a
+    tweet URL or other proof). The backend (and any third-party checks)
+    validate and then award loyalty points (e.g. 25 pts) once per quest. After
+    verification, the quest shows as "Verified" and cannot be verified again.
+
+  The campaign detail page uses the same gamified style as the campaigns list.
+
+11.3 Quest types and verification
+
+  Quest types are defined in the backend (e.g. follow, tweet, link). Each type
+  has a label and possibly a hint (e.g. placeholder for "required link").
+  Verification typically requires the user to provide evidence (e.g. tweet
+  URL). The backend may check sentiment or other rules before awarding points.
+  If verification fails, the user sees an error and may try again if allowed.
+
+
+================================================================================
+12. CHAINLENS
+================================================================================
+
+ChainLens provides wallet intelligence for a given blockchain address.
+
+  The user enters a wallet address (e.g. Ethereum) and submits. One lookup
+  costs loyalty points (e.g. 10 pts). If the balance is insufficient, the
+  action is blocked and an error is shown.
+
+  The backend uses an external provider (e.g. Moralis) to fetch wallet data.
+  The user sees insights such as native balance, token balances (if
+  supported), and possibly a short narrative or score (e.g. "Steady activity,"
+  "High volatility"). Exact fields depend on backend and UI.
+
+  Caching: When Redis is configured, results for a given wallet address and
+  chain are cached for 1 hour. A repeat request for the same address and chain
+  within that period returns the cached data and does not deduct loyalty
+  points.
+
+
+================================================================================
+13. AGORA (SOCIAL FEED)
+================================================================================
+
+Agora is the in-app social layer. The following assumes the Agora frontend is
+available (e.g. under /agora or a dedicated section). Access requires login
+unless otherwise noted.
+
+13.1 Feeds
+
+  Home feed: Personalized feed for the logged-in user (e.g. posts from
+  followed users or algorithm-driven). Paginated (e.g. 50 items per page).
+
+  Trending feed: Posts sorted by popularity (e.g. likes, tips, time). May be
+  public (optional auth) so that guests see a limited view if the product
+  allows.
+
+  User feed: Posts by a specific user. Used to view someone's posts before
+  following.
+
+13.2 Posts
+
+  Create: The user writes content (text; max length e.g. 500 characters) and
+  submits. The post appears in feeds and on the user's profile.
+
+  View: Single post view with full content, author, timestamp, like count, tip
+  count, reply count. The user can like, reply, tip, or bookmark (if
+  implemented).
+
+  Edit/delete: The author can edit or delete their own post. Deletion removes
+  the post from feeds and profile.
+
+13.3 Likes and replies
+
+  Like: The user clicks to like a post. One like per user per post; toggling
+  removes the like. Like count is visible.
+
+  Reply: The user writes a reply and submits. Replies appear under the post and
+  may be paginated (e.g. 50 per page). The post author may receive a
+  notification (if implemented).
+
+  Tip reply: The user can send loyalty points as a tip to the reply author,
+  subject to the same rules as post tips (min/max amount, balance check).
+
+13.4 Tips (loyalty points)
+
+  Tip a post: The user chooses an amount (within min/max, e.g. 1–1,000,000
+  pts) and confirms. Loyalty is deducted from the tipper and credited to the
+  post author. Tip count or total tipped may be shown on the post.
+
+  Tip a reply: Same mechanism for a reply; points go to the reply author.
+
+  Sent/received tips: The user can view lists of tips they sent and tips they
+  received for transparency.
+
+13.5 Follow and profile
+
+  Follow/unfollow: On a user's profile or from a post, the user can follow or
+  unfollow. Follower and following counts are visible on the profile. The
+  home feed may include posts from followed users.
+
+  User profile: Shows username, avatar (if any), follower/following counts, and
+  posts by that user. The user can follow/unfollow and view follower/following
+  lists (paginated). A "most tipped" users list may be available.
+
+13.6 Bookmarks
+
+  The user can bookmark a post to read later. A bookmark list (e.g. "My
+  bookmarks") shows all bookmarked posts; the user can remove a bookmark.
+
+13.7 Direct messages (DMs)
+
+  Conversations: The user sees a list of conversations (each with another
+  user). Clicking opens the conversation thread.
+
+  Start conversation: The user can start a new conversation with another user
+  (e.g. from their profile or a "Message" button). If a conversation already
+  exists, that thread opens.
+
+  Messages: Inside a conversation, messages are listed (paginated, e.g. 50 per
+  page). The user can send a new text message (e.g. max 2000 characters).
+  Real-time updates may be supported via WebSocket.
+
+13.8 Notifications
+
+  The user sees a list of notifications (e.g. "X liked your post," "Y
+  replied," "Z followed you," "W tipped you"). Paginated (e.g. 20 per page).
+  The user can mark a single notification as read or "Mark all as read." Read
+  state is stored.
+
+  On small screens the notification panel is responsive: narrower and shorter
+  (e.g. max 260px width, 50vh height) so it stays within the viewport; text
+  wraps to avoid horizontal overflow.
+
+13.9 Reports and moderation
+
+  Report post: The user can report a post (e.g. inappropriate content). The
+  report is stored and may be listed for admins.
+
+  Report user: The user can report another user. Same as above for admins.
+
+  Admin: Admins can view a list of reports (posts and users) and take action
+  (e.g. "Hide post"). Hidden posts are no longer visible in public or trending
+  feeds (per backend logic).
+
+
+================================================================================
+14. TRENDCRAFT
+================================================================================
+
+Trendcraft provides aggregated trends and AI-assisted content.
+
+  Aggregated trends: The user can view a feed of trending content from
+  multiple sources (e.g. YouTube, Reddit, Hacker News, NewsAPI). The feed may
+  be paginated; each item shows source, title, link, and possibly a short
+  summary.
+
+  Content generation (AI): The user can request AI-generated content (e.g. a
+  tweet or short post) based on context or topic. This uses a backend AI
+  service (e.g. Gemini) and costs loyalty points (e.g. 3 pts per request). The
+  user enters input (e.g. topic or prompt); the result is displayed and can
+  be copied or used elsewhere.
+
+  Content suggestions: The user can request a list of content-type suggestions
+  (e.g. "tweet," "thread," "blog") from the AI. Same cost (e.g. 3 pts). The
+  result is a short list of suggestions.
+
+  If the balance is insufficient for a paid action, the backend returns an
+  error and the frontend shows a message (e.g. "Insufficient loyalty points").
+
+  Caching: When Redis is configured, the aggregated feed and per-source data
+  (YouTube, Reddit, Hacker News, News) are cached for 30 minutes. Repeated
+  requests with the same query parameters return cached data until the TTL
+  expires.
+
+
+================================================================================
+15. PULSEBOT
+================================================================================
+
+PulseBot is an AI companion that works with the user's linked Telegram
+account and (optionally) Gmail for email tasks and scheduled emails.
+
+  Linking Telegram: The user requests a link code (or similar). The backend
+  generates a short-lived code (e.g. 10 minutes) and instructions: the user
+  must open Telegram, find the Pluto PulseBot, and send the code to the bot.
+  Once the bot confirms, the user's Pluto account is linked to their Telegram
+  identity. The page shows whether the user is "Linked" or "Not linked." If not
+  linked, the user must complete the link flow before using summary, ask, or
+  stats. For the bot to receive messages, the backend must register a webhook
+  with Telegram (admin/deployment concern; the user does not configure this).
+
+  Summary: The user clicks "Generate summary" (or similar). The backend
+  collects recent messages from the user's linked Telegram groups (e.g. last
+  12 hours), sends them to an AI, and returns a short summary. Cost: loyalty
+  points (e.g. 10 pts). Insufficient balance shows an error. The summary
+  text is displayed.
+
+  Ask (Q&A): The user types a question and submits. The backend uses the same
+  recent Telegram context and AI to answer in the context of those chats. Cost:
+  loyalty points (e.g. 10 pts per ask). The answer is displayed.
+
+  Stats: The user requests "Group activity" or "Stats." The backend returns
+  non-AI stats (e.g. list of groups, message counts, active users in a
+  period). Cost: loyalty points (e.g. 2 pts).
+
+  Gmail & email tasks: After connecting Gmail (OAuth) on the PulseBot page,
+  the user can sync the inbox, see AI-generated "email tasks" (e.g. replies
+  needed), open a task to view the email and get an AI-suggested reply (costs
+  loyalty), and send the reply. The list-tasks result is cached by user and
+  email IDs (e.g. 1 hour TTL) so repeated views do not trigger extra AI calls.
+
+  Scheduled emails: The user composes an email (to, subject, body), picks a
+  date/time, and submits. The backend stores it; a cron job (e.g. every
+  minute) sends scheduled emails when the time is due. The user can list
+  pending and recently sent items (sent items are only shown for 24 hours),
+  and edit or delete pending ones.
+
+  Caching (Ask): When Redis is configured, the answer for a given user and
+  question (combined with current chat context) is cached for 2 minutes. If
+  the user retries the same question within that window, the cached answer
+  is returned and no loyalty points are deducted.
+
+
+================================================================================
+16. WALLET (BUY LOYALTY)
+================================================================================
+
+The user can purchase loyalty points via a mock wallet flow.
+
+  The user clicks "Buy loyalty" (or similar). A modal or page opens. The user
+  may connect a wallet (e.g. via RainbowKit/WalletConnect) if not already
+  connected. The user selects an amount of loyalty points to buy (or a preset,
+  e.g. min 10, max 10,000, default 100). The UI may show an equivalent "mock"
+  crypto amount. The user confirms. The backend creates a "pending" order; the
+  frontend may simulate a transaction (e.g. mock transaction hash). The user
+  then "confirms" the order (e.g. "Confirm" button); the backend credits the
+  loyalty points and updates the order status. The modal closes and the
+  profile balance updates. No real payment is processed; this is for
+  demonstration only.
+
+
+================================================================================
+17. DAILY REWARDS
+================================================================================
+
+The user can claim a daily reward once per 24 hours.
+
+  Eligibility: Cooldown of 24 hours between claims. Streak: day 1 to day 7.
+  Each day has a fixed reward (e.g. day 1 = 10 pts, day 2 = 20, …, day 7 = 70).
+  Exact values are configured in the backend.
+
+  Claim: The user clicks "Claim daily" (or similar). The backend checks the
+  last claim time; if 24 hours have passed, it awards the points for the
+  current streak day, increments the streak (capped at 7), and updates the
+  "last claim" time. If not yet 24 hours, the backend returns "cannot claim"
+  and the frontend shows the next claim time (e.g. "Next claim in 12h").
+
+  Streak reset: If the user misses a full 24-hour window (per
+  implementation), the streak may reset to 1. The user sees the current streak
+  and next reward on the profile.
+
+
+================================================================================
+18. PRIVACY, TERMS, AND FEEDBACK
+================================================================================
+
+  Privacy Policy (/privacy): Static page describing what information is
+  collected (e.g. email, username, profile, usage), how it is used (operate
+  Pluto, auth, support, analytics), data retention and security, user rights
+  (access, correct, delete, withdraw consent), cookies, and how policy
+  changes are communicated. Last-updated date is shown. The user can return to
+  home.
+
+  Terms of Service (/terms): Static page with acceptance of terms, description
+  of service, eligibility and account responsibility, loyalty points and
+  conduct (no abuse, no cash value unless stated), intellectual property,
+  disclaimer of warranties, limitation of liability, governing law, and
+  contact. Last-updated date is shown. The user can return to home.
+
+  Feedback (landing page): In the "Feedback" section near the bottom of the
+  landing page, the user can submit a message (required) and optionally name
+  and email. On submit, data is sent to the backend and stored in the
+  database. A success message is shown; the user can send another. No login
+  is required.
+
+
+================================================================================
+19. RESPONSIVE & MOBILE UI
+================================================================================
+
+  Navbar & mobile menu
+    On small screens the main nav links (Campquest, Agora, ChainLens,
+    Trendcraft, PulseBot) are hidden. A hamburger button opens a full-width
+    overlay menu with those links and Log out. The notifications bell and
+    profile avatar remain in the header. Safe-area insets and touch-friendly
+    targets (e.g. min 44px) are used for notched devices and tap accuracy.
+
+  Agora on mobile
+    On viewports below the "lg" breakpoint, the Agora sidebar is hidden. A
+    fixed bottom navigation bar appears with Feed, Alerts, Messages, Tips,
+    Create Cast, and Profile so users can navigate Agora on mobile without
+    the sidebar. The main content area is full-width and scrollable.
+
+  Notifications panel
+    The notification dropdown (navbar bell) is responsive: on mobile it uses
+    a smaller max width (e.g. 260px) and max height (50vh) so it stays within
+    the viewport and does not overflow; text wraps to avoid horizontal
+    overflow.
+
+  Landing & Docs
+    Landing feature cards grow with content so "Try Agora", "Try Campquest",
+    etc. are always visible; CTA links are styled as tappable buttons. The
+    Docs page uses overflow-x-hidden; on mobile a dropdown replaces the
+    sidebar for section navigation. Main page wrappers use overflow-x-hidden
+    to avoid horizontal scroll on small screens.
+
+
+================================================================================
+20. USER FLOWS
+================================================================================
+
+20.1 New user: Sign up and first actions
+
+  1. User opens Pluto (landing).
+  2. User clicks "Sign up" or "Get started" and goes to the signup page.
+  3. User enters email, password, and optionally a referral code; submits.
+     Account is created; if the referral code is valid, the referrer receives
+     points.
+  4. User is logged in (or redirected to login). User logs in with email and
+     password.
+  5. User lands on home or profile. Sees loyalty balance (e.g. 0 or starter
+     bonus if any).
+  6. User goes to Profile and claims the daily reward (e.g. 10 pts for day 1).
+     Balance updates.
+  7. User browses Campaigns, opens one, and verifies a quest (e.g. submits
+     tweet URL). Receives the quest completion reward (e.g. 25 pts). Balance
+     increases.
+  8. Optionally, the user goes to Trendcraft or PulseBot and uses a feature
+     (costs points). Balance decreases.
+
+20.2 Creator: Create campaign and add quests
+
+  1. User logs in and goes to the campaigns list.
+  2. User clicks "Create campaign." In the modal, enters name, description,
+     optional expiry (days); submits. Loyalty points (e.g. 100) are deducted;
+     campaign is created; user is redirected to the campaign detail page.
+  3. On the campaign detail page, user clicks "Add quest." In the modal,
+     enters title, description, type (e.g. "Follow"), required link/handle;
+     submits. Loyalty points (e.g. 50) are deducted; quest appears in the list.
+  4. User repeats "Add quest" for more quests (each costs loyalty). User sets
+     campaign status to "Active" so others can participate.
+  5. Other users can now join the campaign and verify quests to earn points.
+
+20.3 Participant: Complete a quest
+
+  1. User logs in and goes to the campaigns list; opens an active campaign.
+  2. User reads a quest (e.g. "Follow @PlutoApp on X"). User performs the
+     action outside Pluto (e.g. follows on X).
+  3. User clicks "Verify" on that quest. A modal or form may ask for proof
+     (e.g. tweet URL). User enters it and submits.
+  4. Backend validates (e.g. checks tweet or mock). If valid, user receives
+     the configured points (e.g. 25) and the quest shows "Verified." If
+     invalid, an error is shown; the user can fix and try again if allowed.
+
+20.4 Agora: Post, like, tip
+
+  1. User logs in and goes to Agora.
+  2. User writes a post (text, within limit) and submits. Post appears in the
+     feed and on the user's profile.
+  3. Another user sees the post and clicks "Like." Like count increments.
+  4. Another user clicks "Tip," enters amount (e.g. 50 pts), and confirms.
+     Tipper's balance decreases by 50; author's balance increases by 50. The
+     tip is recorded.
+
+20.5 Feedback submission (no login)
+
+  1. User is on the landing page (may be a guest).
+  2. User scrolls to "Send feedback."
+  3. User types a message and optionally name and email; clicks "Send feedback."
+  4. Backend stores the feedback in the database and returns success. User
+     sees "Thank you for your feedback" and can send another.
+
+
+================================================================================
+21. LOYALTY POINTS — EARN AND SPEND
+================================================================================
+
+21.1 Earning
+
+  Source            Condition                         Amount (example)
+  ---------        ---------                         -----------------
+  Daily claim      Once per 24h, streak 1–7          Day 1: 10, …, Day 7: 70
+  Quest completion Verify a quest in a campaign      25 pts per quest
+  Referral         New user signs up with your code  500 pts to referrer
+  Wallet purchase  Mock buy via wallet               User-selected (e.g. 10–10,000)
+  Agora tips       Another user tips your post/reply Tipper chooses amount
+
+21.2 Spending
+
+  Action                     Cost (example)
+  ------                     ---------------
+  Create campaign            100 pts
+  Add quest to campaign     50 pts per quest
+  ChainLens (1 lookup)       10 pts
+  Trendcraft (feed/AI)      3 pts per use
+  PulseBot summary           10 pts
+  PulseBot ask               10 pts
+  PulseBot stats             2 pts
+  Agora tip (post/reply)     1–1,000,000 pts (user choice)
+
+  Exact values are configured in the backend. The table above is indicative;
+  refer to backend configuration for production values.
+
+
+================================================================================
+22. TECHNICAL OVERVIEW
+================================================================================
+
+22.1 Frontend
+
+  Pluto's web application is built with React and TypeScript. The build tool
+  is Vite. Styling uses Tailwind CSS. Routing is handled by React Router.
+  Authentication is session-based: the frontend stores a token and sends it with
+  protected API requests. Google sign-in uses a redirect flow to a callback URL.
+  Wallet connection (for the mock loyalty purchase) uses RainbowKit/WalletConnect.
+
+22.2 Backend
+
+  The backend is a Node.js application using Express and TypeScript. Data is
+  stored in MongoDB (Mongoose). Authentication uses JWT; Google sign-in is
+  validated with the Google identity token. All API routes are under the /api
+  prefix. Protected routes require a valid token in the Authorization header.
+  Some routes support optional auth (e.g. public feed); others require an admin
+  role (e.g. moderation).
+
+  Rate limiting: All /api requests are subject to a general rate limit (e.g.
+  200 requests per 15 minutes per IP). Auth routes (register, login, Google
+  login) have a stricter limit (e.g. 10 requests per 15 minutes per IP) to
+  reduce brute-force and credential-stuffing risk. When exceeded, the API
+  returns 429 Too Many Requests with a JSON message.
+
+  Caching: When REDIS_URL is set, the backend uses Redis for response
+  caching. ChainLens results are cached by wallet address and chain (TTL 1
+  hour). Trendcraft feed and source endpoints (YouTube, Reddit, Hacker News,
+  News) are cached by query parameters (TTL 30 minutes). PulseBot "Ask"
+  responses are cached by user and a hash of question plus chat context (TTL
+  2 minutes). If REDIS_URL is not set, caching is skipped and all requests
+  hit the external APIs or AI as before.
+
+22.3 Main API areas
+
+  Auth: registration, login, Google login, get/update current user.
+  Daily claim: status, claim.
+  Campaigns: create, list, get, update, delete; add quest.
+  Quests: list, get, update, delete, verify.
+  Wallet: mock buy loyalty, confirm order.
+  Landing (public): leaderboard (top users by points), platform stats,
+  submit feedback.
+  Agora: posts, feed, likes, replies, tips, follow, bookmarks, DMs,
+  notifications, reports, admin hide.
+  ChainLens: wallet insights (external provider).
+  Trendcraft: feed, YouTube/Reddit/Hacker News/News, generate content,
+  content suggestions.
+  PulseBot: link code, current user link status, summary, ask, stats,
+  webhook (Telegram).
+  Email integration: Gmail OAuth, sync, tasks (cached by user + email IDs),
+  digest, scheduled emails (CRUD, cron sends at scheduled time; sent items
+  shown for 24h), suggest-reply, send-reply.
+
+22.4 Data
+
+  User accounts, campaigns, quests, quest completions, loyalty transactions,
+  feedback submissions, and Agora data (posts, likes, replies, tips, follows,
+  bookmarks, conversations, messages, notifications, reports) are stored in
+  the database. PulseBot link state and related data are stored as required
+  by the backend. Daily claim records support streak and cooldown logic.
+
+22.5 Rate limiting and caching (summary)
+
+  Rate limiting
+    General API: limit per IP per 15-minute window (e.g. 200 requests).
+    Auth (register, login, Google): stricter limit per IP (e.g. 10 per 15
+    minutes). Response: 429 with JSON message when limit exceeded.
+
+  Caching (optional Redis)
+    Requires REDIS_URL in backend environment. When configured:
+    ChainLens: key = wallet address + chain; TTL 1 hour. Cache hit returns
+    stored insight without deducting loyalty points.
+    Trendcraft: feed and per-source responses (YouTube, Reddit, Hacker News,
+    News) cached by query parameters; TTL 30 minutes.
+    PulseBot Ask: key = user ID + hash(question + chat context); TTL 2
+    minutes. Cache hit returns stored answer without deducting loyalty points.
+
+
+================================================================================
+23. GLOSSARY
+================================================================================
+
+  Pluto
+    The loyalty and rewards platform (web application and backend).
+
+  Loyalty points
+    In-app currency; earned and spent as described in this document.
+
+  Campaign
+    A container for quests; has name, description, status (active, draft,
+    expired), owner, participants, and optional expiry.
+
+  Quest
+    A task (e.g. follow, tweet) with title, description, type, and required
+    link; completing it awards loyalty points.
+
+  Verify (quest)
+    The user proves they completed a quest (e.g. by submitting a tweet URL);
+    the backend validates and awards points.
+
+  Agora
+    The in-app social layer: posts, feed, likes, replies, tips, follow, DMs,
+    notifications, bookmarks, reports.
+
+  ChainLens
+    Feature that returns wallet intelligence for a given wallet address;
+    costs loyalty points.
+
+  Trendcraft
+    Aggregated trends (e.g. YouTube, Reddit, news) and AI content generation
+    and suggestions; costs loyalty points.
+
+  PulseBot
+    Telegram bot linked to the user's Pluto account; user can get chat
+    summaries and Q&A; costs loyalty points. Also supports Gmail connect,
+    email tasks (AI-suggested replies), and scheduled emails (send later).
+
+  Email integration
+    Gmail OAuth, sync inbox, AI email tasks (replies needed; list cached by
+    user + email IDs), Gmail digest, scheduled emails (CRUD; cron sends at
+    scheduled time; sent items shown for 24h), suggest/send reply.
+
+  Daily claim
+    Once-per-24-hour reward with a 7-day streak; points increase by day.
+
+  Referral code
+    Unique code per user; when a new user signs up with it, the referrer
+    receives loyalty points.
+
+  Leaderboard
+    List of users ranked by loyalty points (e.g. top 20) on the landing page.
+
+  Feedback
+    Form on the landing page where anyone can submit a message (and optional
+    name and email); stored in the database.
+
+
+================================================================================
+                              END OF DOCUMENTATION
+================================================================================

@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* Campquest gamezone: spinning gradient border on hover */
+@keyframes campquest-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pluto app base styles + mobile-friendly */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply min-h-screen antialiased;
+    overflow-x: hidden;
+    /* Safe area for notched devices */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Touch-friendly: remove tap delay and use subtle highlight */
+@layer utilities {
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.08);
+  }
+  .safe-area-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  .safe-area-top {
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+  }
+}
